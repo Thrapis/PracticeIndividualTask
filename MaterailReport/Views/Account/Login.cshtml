@@ -1,0 +1,58 @@
+﻿@model MaterailReport.Models.LoginModel
+
+@{
+    ViewBag.Title = "Login Page";
+}
+
+
+
+@using (Html.BeginForm("Login", "Account"))
+{
+    @Html.AntiForgeryToken()
+
+
+
+    <div style="padding: 24px 25%; width: -webkit-fill-available; display: flex;">
+
+        
+
+        <div class="form-horizontal" style="display: flex; flex-direction: column; align-items: center; width: -webkit-fill-available;
+                    padding: 12px; background-color: #eeeeee; border-radius: 5px; border: solid 1px #000000">
+
+            <h2 style="margin: 12px 0 18px 0;"><ins>Login In</ins></h2>
+
+            @Html.ValidationSummary(true)
+
+            <div style="margin: 6px 0;">
+                <label for="login_div">Логин</label>
+                <div  id="login_div">
+                    @Html.EditorFor(model => model.Login)
+                    <div style="color: red; font-size: 12px; display: block;">
+                        @Html.ValidationMessageFor(model => model.Login)
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin: 6px 0;">
+                <label for="password_div">Пароль</label>
+                <div  id="password_div">
+                    @Html.EditorFor(model => model.Password)
+                    <div style="color: red; font-size: 12px; display: block;">
+                        @Html.ValidationMessageFor(model => model.Password)
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin: 12px;">
+                <input type="submit" value="Войти" class="btn btn-primary btn-lg" />
+            </div>
+        </div>
+    </div>
+
+    
+}
+
+@*@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}*@
+

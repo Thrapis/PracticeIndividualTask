@@ -1,0 +1,33 @@
+﻿@model List<MaterailReport.Models.ContentOfWarehouse>
+
+<table id="simple_table_id" class="bord-box sz">
+    <tr class="bord-box sz">
+        <th class="bord-box sz">Выбрать</th>
+        <th class="bord-box sz">Инвентарный №</th>
+        <th class="bord-box sz">Название</th>
+        <th class="bord-box sz">Дата оприходования</th>
+    </tr>
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <tr class="bord-box sz sel" id="row @Model[i].Inventory_Id" onclick="checkBox(@Model[i].Inventory_Id, 'simple_list', '')">
+            <td class="bord-box sz"><input type="checkbox" id="chb @Model[i].Inventory_Id" onclick="return false"/></td>
+            <td class="bord-box sz">@Model[i].Inventory_Id</td>
+            <td class="bord-box sz">@Model[i].Material_Object_Name</td>
+            <td class="bord-box sz">@Model[i].Commissioning_Date</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr class="bord-box sz">
+            <td class="bord-box sz" colspan="4">
+                Нет данных
+            </td>
+        </tr>
+    }
+
+</table>
+
+<script>
+    //resizableGrid(document.getElementById('simple_table_id'));
+</script>
+

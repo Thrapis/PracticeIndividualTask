@@ -1,0 +1,129 @@
+﻿html {
+    overflow-y: scroll;
+}
+
+.nav-block {
+    display: flex;
+    justify-content: space-between;
+}
+
+.nav-block-left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 50%;
+}
+
+.nav-block-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 50%;
+}
+
+.login_block {
+    margin: 3px;
+}
+
+.login_text {
+    color: aliceblue;
+    text-align: right;
+    margin: 3px;
+}
+
+.login_photo {
+    height: 46px;
+    width: 46px;
+    object-fit: cover;
+    margin: 3px 6px;
+    border: inset rgb(52, 122, 183);
+    border-width: 3px;
+}
+
+.app_ico {
+    height: 46px;
+    width: 46px;
+    object-fit: cover;
+    margin: 3px 12px 3px 0px;
+}
+
+bord-box {
+    box-sizing: border-box;
+}
+
+table.sz {
+    border-collapse: collapse;
+    width: -webkit-fill-available;
+}
+
+td.sz, th.sz {
+    padding: 5px 15px;
+    text-align: center;
+    font-size: 14px;
+}
+
+table.sz, th.sz, td.sz {
+    border: 2px solid #000;
+}
+
+tr.sel:hover {
+    background-color: #409ae7;
+}
+
+.columnSelector:hover {
+    border-right: 2px solid;
+    border-right-color: red;
+}
+
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+input[type='number'],
+input[type="number"]:hover,
+input[type="number"]:focus {
+    appearance: none;
+    -moz-appearance: textfield;
+}
+
+.animation_on {
+    transition-property: all;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-in;
+    transition-delay: 0.0s;
+}
+
+
+.switch_tabs {
+    display: flex;
+    justify-content: center;
+    width: -webkit-fill-available;
+}
+
+.tab {
+    width: -webkit-fill-available;
+    margin: 0 5px;
+}
+
+button.btn {
+    border-width: 0;
+}
+
+.table_tools {
+    display: flex;
+    justify-content: space-between;
+    width: -webkit-fill-available;
+}
+
+.error_div {
+    transition-property: all;
+    transition-duration: 1s;
+    transition-timing-function: ease-out;
+    transition-delay: 0s;
+
+    display: flex;
+    justify-content: center;
+    width: -webkit-fill-available;
+    color: red;
+}

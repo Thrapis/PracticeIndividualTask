@@ -1,0 +1,37 @@
+﻿@model List<MaterailReport.Models.BrokenContentOfWarehouse>
+
+<table id="broken_table_id" class="bord-box sz">
+    <tr class="bord-box sz">
+        <th class="bord-box sz">Выбрать</th>
+        <th class="bord-box sz">Инвентарный №</th>
+        <th class="bord-box sz">Название</th>
+        <th class="bord-box sz">Дата оприходования</th>
+        <th class="bord-box sz">Цена восстановления</th>
+        <th class="bord-box sz">Износ</th>
+    </tr>
+    @for (int i = 0; i < Model.Count; i++)
+    {
+        <tr class="bord-box sz sel" id="brow @Model[i].Inventory_Id" onclick="checkBox(@Model[i].Inventory_Id, 'broken_list', 'b')">
+            <td class="bord-box sz"><input type="checkbox" id="bchb @Model[i].Inventory_Id" onclick="return false"/></td>
+            <td class="bord-box sz">@Model[i].Inventory_Id</td>
+            <td class="bord-box sz">@Model[i].Material_Object_Name</td>
+            <td class="bord-box sz">@Model[i].Commissioning_Date</td>
+            <td class="bord-box sz">@Model[i].Restoration_Coast</td>
+            <td class="bord-box sz">@Model[i].Deprecation</td>
+        </tr>
+    }
+    @if (Model.Count == 0)
+    {
+        <tr class="bord-box sz">
+            <td class="bord-box sz" style="" colspan="6">
+                Нет данных
+            </td>
+        </tr>
+    }
+
+</table>
+
+<script>
+    //resizableGrid(document.getElementById('broken_table_id'));
+</script>
+

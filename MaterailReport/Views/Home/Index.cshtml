@@ -1,0 +1,344 @@
+﻿@{
+	ViewBag.Title = "Material Report System";
+}
+
+@Scripts.Render("~/Scripts/MaterialReport.js")
+<script type="text/javascript" src="/Scripts/jquery-3.4.1.min.js"></script>
+
+<div class="jumbotron">
+
+	<h2 align="center">Добро пожаловать в Material Report System, @ViewBag.Name!</h2>
+	@if (User.Identity.IsAuthenticated)
+	{
+
+		@*<div style="height: 200px;  display: flex; justify-content: center; align-items: center;">
+				<p>
+					Пожалуйста, войдите в аккаунт, чтобы воспользоваться функционалом системы.
+				</p>
+			</div>*@
+
+	}
+	else
+	{
+
+		<div style="height: 100px;  display: flex; justify-content: center; align-items: center;">
+			<p>
+				Пожалуйста, войдите в аккаунт, чтобы воспользоваться функционалом системы.
+			</p>
+		</div>
+		<div style="height: 50px;  display: flex; justify-content: center; align-items: center;">
+			@Html.ActionLink("Войти", "Login", "Account", null, new { @class = "btn btn-primary btn-lg", @style = "height: fit-content" })
+		</div>
+
+	}
+</div>
+
+
+<div class="row">
+
+    @if (User.Identity.IsAuthenticated)
+    {
+
+		<div class="switch_tabs">
+            <button class="btn btn-primary btn-lg tab" id="t1">ОБЪЕКТЫ</button>
+            <button class="btn btn-primary btn-lg tab" id="t2">СЛОМАННЫЕ ОБЪЕКТЫ</button>
+            <button class="btn btn-primary btn-lg tab" id="t3">СПИСАННЫЕ ОБЪЕКТЫ</button>
+		</div>
+
+        <div id="tables" style="margin: 12px 0;">
+            
+            <div class="error_div" id="error_text" style="opacity: 0">
+                Выберите хотя бы один элемент из таблицы для выполнения операции
+            </div>
+
+            <div id="simple" style="display: block;" class="animation_on">
+
+                <div style="margin: 6px 6px 6px 6px;" class="jumbotron table_tools">
+                    
+
+                    <div style="display: inline; width: 204px;">
+                        <label for="pageConrol">Страница: </label>
+                        <div id="pageConrol" style="display: inline;">
+                            <input class="btn btn-primary" type="button" value="<" id="minus" />
+                            <input type="number" step=1 value=1 id="part" style="border-width: 0; width: 50px; text-align: center;" readonly tabindex="-1" />
+                            <input class="btn btn-primary" type="button" value=">" id="plus" />
+                        </div>
+                        
+                    </div>
+
+                    <div style="display: inline;">
+
+                        <div>
+                            <label for="restorCoastControlS">Цена восстановления: </label>
+                            <input type="number" id="restorCoastControlS" onchange="copyValue('restorCoastControlS', 'restorationCoastS')" min="0" value="0" style="margin: 3px; width: 100px; text-align: center;" />
+                            <label for="deprecationControlS">Износ: </label>
+                            <input type="number" id="deprecationControlS" onchange="copyValue('deprecationControlS', 'deprecationS')" min="0" value="0" style="margin: 3px; width: 100px; text-align: center;" />
+                            <button onclick="submitForm('simple_list', '/Home/FromSimpleToBroken', 3)" class="btn btn-primary">Отправить в сломанные объекты ></button>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div style="margin: 6px; display: flex; align-content: center; width: -webkit-fill-available;">
+                    <button onclick="toggleDisplay('add_menu', 'flex', 'none')" class="btn btn-primary" style="width: -webkit-fill-available;">+</button>
+                </div>
+
+                <div id="add_menu" style="margin: 6px 6px 24px 6px; display: none; flex-direction: column; align-items: center; background-color: #eeeeee;">
+                    <div class="error_div" id="no_material" style="opacity: 0; margin: 2px 0; font-size: 10px">
+                        Описания такого объекта нет в базе данных
+                    </div>
+                    <form method="post" style="margin: 0 6px 6px 6px;" id="add_content_to_warehouse">
+                        <label for="objectNameControl">Название объекта: </label>
+                        <input type="text" oninput="hasMaterial(this.value)" id="objectNameControl" name="objectName" value="" style="margin: 3px; width: 200px; text-align: center;" />
+                        <label for="commissioningDateControl">Дата оприходования: </label>
+                        <input type="datetime-local" id="commissioningDateControl" name="commissioningDate" style="margin: 3px; width: 200px; text-align: center;" />
+                    </form>
+                    <div style="margin: 6px;">
+                        <button onclick="submitForm('add_content_to_warehouse', '/Home/AddContentToWarehouse', 4)" class="btn btn-primary">Добавить в систему</button>
+                    </div>
+                </div>
+
+                <div id="results"></div>
+            </div>
+
+
+
+            <div id="broken" style="display: block;" class="animation_on">
+
+                <div style="margin: 6px 6px 24px 6px;" class="jumbotron  table_tools">
+
+                    <div style="display: inline; width: 204px;">
+                        <label for="bpageConrol">Страница: </label>
+                        <div id="bpageConrol" style="display: inline;">
+                            <input class="btn btn-primary" type="button" value="<" id="bminus" />
+                            <input type="number" step=1 value=1 id="bpart" style="border-width: 0; width: 50px; text-align: center;" readonly tabindex="-1" />
+                            <input class="btn btn-primary" type="button" value=">" id="bplus" />
+                        </div>
+
+                    </div>
+
+                    <div style="display: inline;">
+
+                        <div>
+                            <button onclick="submitForm('broken_list', '/Home/FromBrokenToSimple', 2)" class="btn btn-primary">< Отправить в объекты</button>
+                            <label for="decommissionDateControlB">Дата списания: </label>
+                            <input type="datetime-local" id="decommissionDateControlB" onchange="copyValue('decommissionDateControlB', 'decommissionDateB')" style="margin: 3px; width: 200px; text-align: center;"/>
+                            <button onclick="submitForm('broken_list', '/Home/FromBrokenToDecommissioned', 2)" class="btn btn-primary">Отправить в списанные объекты ></button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="bresults"></div>
+            </div>
+
+
+
+            <div id="decommisssioned" style="display: block;" class="animation_on">
+
+                <div style="margin: 6px 6px 24px 6px;" class="jumbotron  table_tools">
+
+                    <div style="display: inline; width: 204px; vertical-align: central;">
+                        <label for="dpageConrol">Страница: </label>
+                        <div id="dpageConrol" style="display: inline;">
+                            <input class="btn btn-primary" type="button" value="<" id="dminus" />
+                            <input type="number" step=1 value=1 id="dpart" style="border-width: 0; width: 50px; text-align: center;" readonly tabindex="-1" />
+                            <input class="btn btn-primary" type="button" value=">" id="dplus" />
+                        </div>
+                    </div>
+
+                    <div style="display: inline; width: 700px; float: right;">
+
+                        <div style="float: right;">
+                            <label for="postControlD">Долность подписывающего: </label>
+                            <input type="text" id="postControlD" onchange="copyValue('postControlD', 'postD')" value="" style="margin: 3px; width: 150px; text-align: center;">
+
+                            <label for="fileNameControlD">Название отчёта: </label>
+                            <input type="text" id="fileNameControlD" onchange="copyValue('fileNameControlD', 'fileNameD')" style="margin: 3px; width: 150px; text-align: center;">
+                            
+                        </div>
+
+                        <div style="float: right;">
+                            <label for="fullNameControlD">Инициалы и фамилия подписывающего: </label>
+                            <input type="text" id="fullNameControlD"  onchange="copyValue('fullNameControlD', 'fullNameD')" value="" style="margin: 3px; width: 210px; text-align: center;">
+                            <button onclick="submitForm('decommissioned_list', '/Home/MakeReport', 4)" class="btn btn-primary">Получить отчёт</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="dresults"></div>
+            </div>
+        </div>
+
+    }
+</div>
+
+<form method="post" action="" id="simple_list" style="display: none;">
+    <input type="text" id="restorationCoastS" name="restorationCoast" value="0">
+    <input type="text" id="deprecationS" name="deprecation" value="0">
+</form>
+
+<form method="post" action="" id="broken_list" style="display: none;">
+    <input type="datetime-local" id="decommissionDateB" name="decommissionDate" value="0">
+</form>
+
+<form method="get" action="" id="decommissioned_list" style="display: none;">
+    <input type="text" id="postD" name="post" value="">
+    <input type="text" id="fullNameD" name="fullName" value="">
+    <input type="text" id="fileNameD" name="fileName" value="">
+</form>
+
+
+<script>
+	$(document).ready(function () {
+
+        $.fn.setNow = function (onlyBlank) {
+            var now = new Date($.now());
+
+            var year = now.getFullYear();
+
+            var month = (now.getMonth() + 1).toString().length === 1 ? '0' + (now.getMonth() + 1).toString() : now.getMonth() + 1;
+            var date = now.getDate().toString().length === 1 ? '0' + (now.getDate()).toString() : now.getDate();
+            var hours = now.getHours().toString().length === 1 ? '0' + now.getHours().toString() : now.getHours();
+            var minutes = now.getMinutes().toString().length === 1 ? '0' + now.getMinutes().toString() : now.getMinutes();
+            var seconds = now.getSeconds().toString().length === 1 ? '0' + now.getSeconds().toString() : now.getSeconds();
+
+            var formattedDateTime = year + '-' + month + '-' + date + 'T' + hours + ':' + minutes + ':' + seconds;
+
+            if (onlyBlank === true && $(this).val()) {
+                return this;
+            }
+
+            $(this).val(formattedDateTime);
+
+            return this;
+        }
+
+		//-------------------------------------------------
+
+        $('input[type="datetime-local"]').setNow();
+
+		//-------------------------------------------------
+
+        document.getElementById("t1").style["background-color"] = '#294d9f';
+
+		$('#t1').click(function (e) {
+			document.getElementById("simple").style.display = 'block';
+			document.getElementById("broken").style.display = 'none';
+			document.getElementById("decommisssioned").style.display = 'none';
+
+            document.getElementById("t1").style["background-color"] = '#294d9f';
+            document.getElementById("t2").style["background-color"] = '#337ab7';
+            document.getElementById("t3").style["background-color"] = '#337ab7';
+
+            document.getElementById('error_text').style['opacity'] = 0;
+		});
+
+		$('#t2').click(function (e) {
+			document.getElementById("simple").style.display = 'none';
+			document.getElementById("broken").style.display = 'block';
+			document.getElementById("decommisssioned").style.display = 'none';
+
+            document.getElementById("t1").style["background-color"] = '#337ab7';
+            document.getElementById("t2").style["background-color"] = '#294d9f';
+            document.getElementById("t3").style["background-color"] = '#337ab7';
+
+            document.getElementById('error_text').style['opacity'] = 0;
+		});
+
+		$('#t3').click(function (e) {
+			document.getElementById("simple").style.display = 'none';
+			document.getElementById("broken").style.display = 'none';
+			document.getElementById("decommisssioned").style.display = 'block';
+
+            document.getElementById("t1").style["background-color"] = '#337ab7';
+            document.getElementById("t2").style["background-color"] = '#337ab7';
+            document.getElementById("t3").style["background-color"] = '#294d9f';
+
+            document.getElementById('error_text').style['opacity'] = 0;
+		});
+
+		//---------------------------------------------
+
+		var valueElement = $('#part');
+		function incrementValue(e) {
+			valueElement.val(Math.max(parseInt(valueElement.val()) + e.data.increment, 1));
+			valueElement.val(Math.min(parseInt(valueElement.val()), @ViewBag.Parts));
+
+			$('#part').change();
+		}
+		$('#plus').bind('click', { increment: 1 }, incrementValue);
+		$('#minus').bind('click', { increment: -1 }, incrementValue);
+
+
+		var bvalueElement = $('#bpart');
+		function bincrementValue(e) {
+			bvalueElement.val(Math.max(parseInt(bvalueElement.val()) + e.data.increment, 1));
+			bvalueElement.val(Math.min(parseInt(bvalueElement.val()), @ViewBag.BParts));
+
+			$('#bpart').change();
+		}
+		$('#bplus').bind('click', { increment: 1 }, bincrementValue);
+		$('#bminus').bind('click', { increment: -1 }, bincrementValue);
+
+
+		var dvalueElement = $('#dpart');
+		function bincrementValue(e) {
+			dvalueElement.val(Math.max(parseInt(dvalueElement.val()) + e.data.increment, 1));
+			dvalueElement.val(Math.min(parseInt(dvalueElement.val()), @ViewBag.DParts));
+
+			$('#dpart').change();
+		}
+		$('#dplus').bind('click', { increment: 1 }, bincrementValue);
+        $('#dminus').bind('click', { increment: -1 }, bincrementValue);
+
+		//---------------------------------------------
+
+		$('#part').change(function (e) {
+			e.preventDefault();
+			var part = $('#part').val();
+			part=encodeURIComponent(part);
+
+            $('#results').load('@Url.Action("ContentOfWarehousePart", "Home")?part=' + part, function () {
+                pageChanged('simple_list', '');
+                resizableGrid(document.getElementById('simple_table_id'));
+            });
+		});
+
+		$('#bpart').change(function (e) {
+			e.preventDefault();
+			var part = $('#bpart').val();
+			part=encodeURIComponent(part);
+            $('#bresults').load('@Url.Action("BrokenContentOfWarehousePart", "Home")?part=' + part, function () {
+                pageChanged('broken_list', 'b');
+                resizableGrid(document.getElementById('broken_table_id'));
+            });
+		});
+
+		$('#dpart').change(function (e) {
+			e.preventDefault();
+			var part = $('#dpart').val();
+			part=encodeURIComponent(part);
+            $('#dresults').load('@Url.Action("DecommissionedContentOfWarehousePart", "Home")?part=' + part, function () {
+                pageChanged('decommissioned_list', 'd');
+                resizableGrid(document.getElementById('decommissioned_table_id'));
+            });
+        });
+
+        //---------------------------------------------
+
+        $('#results').load('@Url.Action("ContentOfWarehousePart", "Home")?part=' + 1, function () {
+                resizableGrid(document.getElementById('simple_table_id'));
+                $('#bresults').load('@Url.Action("BrokenContentOfWarehousePart", "Home")?part=' + 1, function () {
+                    resizableGrid(document.getElementById('broken_table_id'));
+                    $('#dresults').load('@Url.Action("DecommissionedContentOfWarehousePart", "Home")?part=' + 1, function () {
+                        resizableGrid(document.getElementById('decommissioned_table_id'));
+
+                        document.getElementById("simple").style.display = 'block';
+                        document.getElementById("broken").style.display = 'none';
+                        document.getElementById("decommisssioned").style.display = 'none';
+                    });
+                });
+            });
+	});
+</script>

@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="@Url.Content("~/Content/MaterialReport.css")" rel="stylesheet" type="text/css" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @RenderSection("scripts", required: false)
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container nav-block">
+            <div class="navbar-header nav-block-left">
+                <a href="/"><img src="@ViewBag.Logo" class="app_ico"/></a>
+                @Html.ActionLink("Material Report System", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-header nav-block-right">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <div class="login_block">
+                        <div class="login_text">@ViewBag.Name</div>
+                        <div class="login_text">@ViewBag.Login - @ViewBag.Level Lvl</div>
+                    </div>
+                    <img src="@ViewBag.UserPhoto" class="login_photo">
+                    @Html.ActionLink("Выход", "Logoff", "Account", new { area = "" }, new { @class = "btn btn-primary btn-lg", @style = "height: fit-content" })
+                }
+                else
+                {
+                    @Html.ActionLink("Войти", "Login", "Account", null, new { @class = "btn btn-primary btn-lg", @style = "height: fit-content" })
+                }
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - WAG WebApp</p>
+        </footer>
+    </div>
+
+</body>
+</html>
